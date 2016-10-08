@@ -4,12 +4,13 @@
 	padding-bottom: 10px;
 	padding-left: 10px;
 	margin-bottom: 10px;
+	width: 200px;
 }
 .tweet
 {
 	padding: 10px;
 	margin-bottom: 15px;
-	background-color: #E1E1E1;
+	background-color: #E6E6E6;
 }
 #send
 {
@@ -18,4 +19,8 @@
 #message
 {
 	font-color:grey;
+}
+
+#submit{
+	margin-top: 15px;
 }

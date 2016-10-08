@@ -14,7 +14,7 @@
 			<input class="stringInput" type="input" id="message">
 			<h4 class="label">Sender:</h4>
 			<input class="stringInput" type="input" id="sender">
-			<button class="button" id="submit">Submit</button>
+			<button class="button" id="submit">Send Tweet</button>
 		</div>
 		<div id="theTweets"></div>
 	</body>
@@ -49,18 +49,23 @@
 		{
 			$("button").click(function()
 			{
-				console.log("clicked");
-				var theMessage = $("#message").val();
-				var senderName = $("#sender").val();
-				var time = new Date();
-				var tweetKey = chattyRef.push({
-					message: theMessage,
-					sender: senderName,
-					inReplyTo: "tweetKey",
-					timeStamp: time
-				}).key;
-				$("#message").val('');
-				$("#sender").val('');
+				if($("#message").val() == "" || $("#sender").val() == ""){
+					alert("Don't leave stuff blank");
+				}
+				else{
+					console.log("clicked");
+					var theMessage = $("#message").val();
+					var senderName = $("#sender").val();
+					var time = new Date();
+					var tweetKey = chattyRef.push({
+						message: theMessage,
+						sender: senderName,
+						inReplyTo: "tweetKey",
+						timeStamp: time
+					}).key;
+					$("#message").val('');
+					$("#sender").val('');
+				}
 			});
 		});
 	</script>
