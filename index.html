@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+	<head>
+		<script src='https://cdn.firebase.com/js/client/2.2.1/firebase.js'></script>
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+		<script> 
+		// I used jquery.  See http://www.w3schools.com/jquery/
+		// see https://www.firebase.com/docs/web/quickstart.html 
+		var dbRef = new Firebase('https://luminous-torch-6850.firebaseio.com/');
+		var tweetsRef = dbRef.child('chatty');
+		
+		$( document ).ready(function() {
+			$("#tweetlist").append("<p> I'm alive!"); 
+		}); 
+		
+		// https://www.firebase.com/docs/web/guide/retrieving-data.html
+		tweetsRef.on("child_added", function(tweet) {
+			$("#tweetlist").append("<p><hr> tweet!: "); 
+			var theTweet = tweet.val(); 
+			$("#tweetlist").append(theTweet.message); 
+		});
+		
+		//see https://www.firebase.com/docs/web/guide/saving-data.html
+		// to learn about writing data. 
+		// and it will be handy to know a little about json 
+		// http://www.w3schools.com/json/
+		
+		</script>
+    
+    
+	</head>
+	<body>
+		<h1>Chatty:  the twitter clone</h1>
+		<div id="tweetlist">tweets go here</div>
+	</body>
+</html>
