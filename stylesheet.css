@@ -1,0 +1,21 @@
+.input
+{
+	border: 1px solid grey;
+	padding-bottom: 10px;
+	padding-left: 10px;
+	margin-bottom: 10px;
+}
+.tweet
+{
+	padding: 10px;
+	margin-bottom: 15px;
+	background-color: #E1E1E1;
+}
+#send
+{
+	font-style: italic;
+}
+#message
+{
+	font-color:grey;
+}
