@@ -1,35 +1,99 @@
 <!DOCTYPE html>
-	<head>
-		<script src='https://cdn.firebase.com/js/client/2.2.1/firebase.js'></script>
-		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-		<script> 
-		// I used jquery.  See http://www.w3schools.com/jquery/
-		// see https://www.firebase.com/docs/web/quickstart.html 
-		var dbRef = new Firebase('https://luminous-torch-6850.firebaseio.com/');
-		var tweetsRef = dbRef.child('chatty');
-		
-		$( document ).ready(function() {
-			$("#tweetlist").append("<p> I'm alive!"); 
-		}); 
-		
-		// https://www.firebase.com/docs/web/guide/retrieving-data.html
-		tweetsRef.on("child_added", function(tweet) {
-			$("#tweetlist").append("<p><hr> tweet!: "); 
-			var theTweet = tweet.val(); 
-			$("#tweetlist").append(theTweet.message); 
+<head>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/3.4.1/firebase.js"></script>
+	
+	<style>
+		.tweetInput
+		{
+			border: 1px solid grey;
+			padding-bottom: 15px;
+			padding-left: 15px;
+			margin-bottom: 15px;
+			margin-left: 50px;
+			margin-right: 50px;
+			background-color: #f0f2f5;
+		}
+		.tweet
+		{
+			padding: 10px;
+			margin-bottom: 15px;
+			margin-left: 50px;
+			margin-right: 50px;
+			border-radius: 10px;
+			background-color: #e6f3ff;
+		}
+		#send
+		{
+			font-style: italic;
+		}
+		#message
+		{
+			font-color:grey;
+		}
+	</style>
+
+	<script>
+		//Initialize Firebase
+		  var config =
+		  {
+			apiKey: "AIzaSyBDgHk3_m-vqyUbTGIqgCZ8qAb-CoY5ID4",
+			authDomain: "luminous-torch-6850.firebaseapp.com",
+			databaseURL: "https://luminous-torch-6850.firebaseio.com",
+			storageBucket: "luminous-torch-6850.appspot.com",
+			messagingSenderId: "825487892602"
+		  };
+		  firebase.initializeApp(config);
+
+		var chattyRef = firebase.database().ref("chatty/");
+		chattyRef.on('child_added', function(data)
+		{
+			var message = data.val().message;
+			var sender = data.val().sender;
+			console.log("Message: " + message + " Sender: " + sender);
+			$("#tweets").prepend("<div class=\"tweet\"><p id=\"message\">" + message + "<br></p>"
+				+ "<p id=\"send\">" + sender + "</p></div>");
 		});
-		
-		//see https://www.firebase.com/docs/web/guide/saving-data.html
-		// to learn about writing data. 
-		// and it will be handy to know a little about json 
-		// http://www.w3schools.com/json/
-		
-		</script>
-    
-    
-	</head>
-	<body>
-		<h1>Chatty:  the twitter clone</h1>
-		<div id="tweetlist">tweets go here</div>
-	</body>
-</html>
+
+		chattyRef.on('child_removed', function(data)
+		{
+		});
+
+		$("document").ready(function()
+		{
+			$("button").click(function()
+			{
+				console.log("clicked");
+				var myMessage = $("#tweetMessage").val();
+				var mySender = $("#tweetSender").val();
+				var myTime = new Date();
+				var tweetKey = chattyRef.push({
+					message: myMessage,
+					sender: mySender,
+					inReplyTo: "tweetKey",
+					timeStamp: myTime
+				}).key;
+				$("#tweetMessage").val('');
+				$("#tweetSender").val('');
+			});
+		});
+
+	</script>
+
+</head>
+
+<body>
+
+	<h1 id="title">Twitter Clone</h1>
+
+	<div class="tweetInput">
+		<h4 class="label">Message:</h4>
+		<input class="stringInput" type="input" id="tweetMessage">
+		<h4 class="label">Sender:</h4>
+		<input class="stringInput" type="input" id="tweetSender">
+		<button class="button" id="submitButt">Submit</button>
+	</div>
+
+	<div id="tweets"></div>
+
+</body>
