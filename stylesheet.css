@@ -3,6 +3,7 @@
 	border: 2px solid grey;
 	padding-bottom: 10px;
 	padding-left: 10px;
+	padding-right:10px;
 	margin-bottom: 10px;
 	width: 200px;
 }
@@ -12,15 +13,16 @@
 	margin-bottom: 15px;
 	background-color: #E6E6E6;
 }
-#send
+.send
 {
 	font-style: italic;
 }
-#message
+.message
 {
 	font-color:grey;
 }
 
-#submit{
+.button{
 	margin-top: 15px;
+	margin-bottom:15px;
 }

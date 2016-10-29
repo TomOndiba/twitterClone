@@ -15,58 +15,111 @@
 			<h4 class="label">Sender:</h4>
 			<input class="stringInput" type="input" id="sender">
 			<button class="button" id="submit">Send Tweet</button>
+			<hr>
+			<h4 class="label"># Tweets to Display:</h4>
+			<input class="stringInput" type="number" id="twitterCount" value=5>
+			<button class="button" id="updateCount">Update</button>
 		</div>
 		<div id="theTweets"></div>
 	</body>
 	
-	<script>
-		//Initialize Firebase
-		var config =
-		{
-			apiKey: "AIzaSyBDgHk3_m-vqyUbTGIqgCZ8qAb-CoY5ID4",
+		<script>
+			var DBconfig = {
 			authDomain: "luminous-torch-6850.firebaseapp.com",
 			databaseURL: "https://luminous-torch-6850.firebaseio.com",
-			storageBucket: "luminous-torch-6850.appspot.com",
-			messagingSenderId: "825487892602"
-		};
-		firebase.initializeApp(config);
+			storageBucket: "bucket.appspot.com"
+			};
 
-		var chattyRef = firebase.database().ref("chatty/");
-		chattyRef.on('child_added', function(data)
-		{
-			var message = data.val().message;
-			var sender = data.val().sender;
-			console.log("Message: " + message + " Sender: " + sender);
-			$("#theTweets").prepend("<div class=\"tweet\"><p id=\"message\">" + message + "<br></p>"
-				+ "<p id=\"send\">" + sender + "</p></div>");
-		});
+			firebase.initializeApp(DBconfig);
+			var chattyref = firebase.database().ref('chatty/');
+			var tweets = [];
 
-		chattyRef.on('child_removed', function(data)
-		{
-		});
+			if (!Date.now) {
+				Date.now = function() { return new Date().getTime(); }
+			}
 
-		$("document").ready(function()
-		{
-			$("button").click(function()
-			{
-				if($("#message").val() == "" || $("#sender").val() == ""){
-					alert("Don't leave stuff blank");
+
+			function addtweet() {
+				var sender = $('#sender').val();
+				var message = $('#message').val();
+				
+				if (!sender || !message) {
+					alert("No fields left blank :)");
+					return;
 				}
-				else{
-					console.log("clicked");
-					var theMessage = $("#message").val();
-					var senderName = $("#sender").val();
-					var time = new Date();
-					var tweetKey = chattyRef.push({
-						message: theMessage,
-						sender: senderName,
-						inReplyTo: "tweetKey",
-						timeStamp: time
-					}).key;
-					$("#message").val('');
-					$("#sender").val('');
+				var newTweetRef = chattyref.push();
+				console.log(Math.round(new Date().getTime()/1000));
+				newTweetRef.set({
+					'message': $('#message').val(),
+					'sender': $('#sender').val(),
+					'timeStamp': Math.round(new Date().getTime()/1000)
+				});
+				$('#sender').val("");
+				$('#message').val("");
+			}
+
+			function removeTweetHtml(idx) {
+				var temp = tweets.splice(idx, 1);
+				$("#" + temp[0].key).remove();
+				return temp[0].key;
+			}
+
+			function deleteTweetDB(key) {
+				chattyref.child(key).remove();
+			}
+
+			function startTweetListener() {
+				var tweetCount = $('#twitterCount').val();
+				
+				if(tweetCount == 0)
+				{
+					tweetCount = 5;
 				}
+				//while(tweetCount != 0){
+					chattyref.on('child_added', function(tweet) {
+						console.log(tweet.val(), tweet.key);
+						tweets.unshift(tweet);
+						//if (tweets.length > 5) {
+						//	removeTweetHtml(tweets.length-1); // delete the oldest tweet
+						//}
+
+						$("#theTweets").prepend(
+							'<div id="' + tweet.key + '" class="tweet">\
+									<div class="message">\
+										<p>' + tweet.val().message + '</p>\
+									</div>\
+									<div class="send">\
+										<h3 id="question">' + tweet.val().sender + '</h3>\
+									</div>\
+									<button id="button' + tweet.key + '" onclick="deleteTweet(this)" class="button">Delete</button>\
+								</div>'
+						);
+					});
+					tweetCount--;
+				//};
+			};
+
+			function deleteTweet(e) {
+				var key = e.id.substring(6);
+				for (var i = 0; i < tweets.length; i++) {
+					if (tweets[i].key == key) {
+						removeTweetHtml(i);
+						deleteTweetDB(key);
+						break;
+					}
+				}
+
+			}
+
+			$(document).ready(function() {
+				startTweetListener();
+				$('#submit').click(addtweet);
+				$(document).keypress(function(e) {
+					if(e.which == 13) {
+						addtweet();
+					}
+				});
 			});
-		});
-	</script>
+
+		</script>
 </html>
